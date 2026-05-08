@@ -1,0 +1,188 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["buyer", "seller", "admin"] },
+        "shop_name": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "profile_image": { "type": "string" },
+        "balance": { "type": "number", "description": "Wallet balance for sellers and commissions for admin" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "role"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Marketplace product listing",
+      "type": "object",
+      "properties": {
+        "seller_id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "discount_price": { "type": "number" },
+        "stock": { "type": "integer" },
+        "category": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "delivery_charges": { "type": "number" },
+        "condition": { "type": "string", "enum": ["New", "Used"] },
+        "delivery_type": { "type": "string", "enum": ["Local", "Nationwide"] },
+        "status": { "type": "string", "enum": ["available", "out_of_stock"] },
+        "is_approved": { "type": "boolean" },
+        "is_sponsored": { "type": "boolean" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["seller_id", "title", "price", "category"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase record",
+      "type": "object",
+      "properties": {
+        "buyer_id": { "type": "string" },
+        "seller_id": { "type": "string" },
+        "product_id": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "total_amount": { "type": "number" },
+        "seller_amount": { "type": "number", "description": "95% of total amount" },
+        "admin_commission": { "type": "number", "description": "5% of total amount" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "shipped", "delivered", "cancelled"] },
+        "shipping_address": { "type": "string" },
+        "phone": { "type": "string" },
+        "payment_method": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["buyer_id", "seller_id", "product_id", "total_amount", "shipping_address", "phone"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "In-app chat message",
+      "type": "object",
+      "properties": {
+        "sender_id": { "type": "string" },
+        "receiver_id": { "type": "string" },
+        "content": { "type": "string" },
+        "read": { "type": "boolean" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["sender_id", "receiver_id", "content"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Homepage advertisement banner",
+      "type": "object",
+      "properties": {
+        "image_url": { "type": "string" },
+        "link": { "type": "string" },
+        "active": { "type": "boolean" },
+        "title": { "type": "string" },
+        "order": { "type": "integer" },
+        "type": { "type": "string", "enum": ["home", "category", "video"] },
+        "category": { "type": "string" }
+      },
+      "required": ["image_url", "active"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Seasonal sale campaign",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "image_url": { "type": "string" },
+        "discount_text": { "type": "string" },
+        "active": { "type": "boolean" },
+        "start_date": { "type": "string", "format": "date-time" },
+        "end_date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "image_url", "active"]
+    },
+    "PopupAd": {
+      "title": "PopupAd",
+      "description": "Welcome/Interstitial popup advertisement",
+      "type": "object",
+      "properties": {
+        "image_url": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "button_text": { "type": "string" },
+        "button_link": { "type": "string" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["image_url", "active"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Discount coupon code",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "discount_type": { "type": "string", "enum": ["percentage", "fixed"] },
+        "discount_value": { "type": "number" },
+        "min_purchase": { "type": "number" },
+        "active": { "type": "boolean" },
+        "expiry_date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["code", "discount_type", "discount_value", "active"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Wallet transaction record",
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string" },
+        "type": { "type": "string", "enum": ["sale", "commission", "payout", "refund"] },
+        "amount": { "type": "number" },
+        "order_id": { "type": "string" },
+        "status": { "type": "string", "enum": ["completed", "pending", "failed"] },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["user_id", "type", "amount", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and seller info"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Product listings for the bazar"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Purchase orders"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Chat messages between users"
+    },
+    "/banners/{bannerId}": {
+      "schema": "Banner",
+      "description": "Promotional banners"
+    },
+    "/campaigns/{campaignId}": {
+      "schema": "Campaign",
+      "description": "Seasonal sale campaigns"
+    },
+    "/popup_ads/{adId}": {
+      "schema": "PopupAd",
+      "description": "Popup notifications and ads"
+    },
+    "/coupons/{couponId}": {
+      "schema": "Coupon",
+      "description": "Promo codes and discounts"
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Wallet history"
+    }
+  }
+}
